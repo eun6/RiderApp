@@ -11,6 +11,8 @@ type RootStackParamList = {
   Home: undefined;
   Details: undefined;
 };
+
+//TypeScript 요소임. 그냥 따라 적는 수밖에 없음.
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 type DetailsScreenProps = NativeStackScreenProps<ParamListBase, 'Details'>;
 
