@@ -10,10 +10,17 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import DismissKeyboardView from '../components/DismissKeyboardView';
+import axios, {AxiosError} from 'axios';
+import Config from 'react-native-config';
+import userSlice from '../slices/user';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {useAppDispatch} from '../store';
 
 type SignInScreenProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
 
 function SignIn({navigation}: SignInScreenProps) {
+  const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const canGoNext = email && password;
@@ -30,15 +37,46 @@ function SignIn({navigation}: SignInScreenProps) {
   }, []);
 
   //로그인 버튼 콜백 함수
-  const onSubmit = useCallback(() => {
+  const onSubmit = useCallback(async () => {
+    if (loading) {
+      return;
+    }
     if (!email || !email.trim()) {
       return Alert.alert('알림', '이메일 입력해주세요.');
     }
     if (!password || !password.trim()) {
       return Alert.alert('알림', '비밀번호 입력해주세요.');
     }
-    Alert.alert('알림', '로그인 되었습니다.');
-  }, [email, password]);
+    try {
+      setLoading(true);
+      const response = await axios.post(`${Config.API_URL}/login`, {
+        email,
+        password,
+      });
+      console.log(response);
+      Alert.alert('알림', '로그인 되었습니다.');
+      dispatch(
+        userSlice.actions.setUser({
+          name: response.data.data.name,
+          email: response.data.data.email,
+          accessToken: response.data.data.accessToken,
+        }),
+      );
+      //객체 말고 그냥 보낼 때
+      dispatch(userSlice.actions.setName(response.data.data.name));
+      await EncryptedStorage.setItem(
+        'refreshToken',
+        response.data.data.refreshToken,
+      );
+    } catch (error) {
+      const errorResponse = (error as AxiosError).response;
+      if (errorResponse) {
+        Alert.alert('알림', errorResponse.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, dispatch, email, password]);
 
   //회원가입 버튼 콜백 함수
   const toSignUp = useCallback(() => {
@@ -91,8 +129,10 @@ function SignIn({navigation}: SignInScreenProps) {
           disabled={!canGoNext}>
           <Text style={styles.buttonText}>Login</Text>
         </Pressable>
-        <Pressable onPress={toSignUp}>
-          <Text>회원가입</Text>
+        <Pressable
+          style={{...styles.loginButton, backgroundColor: 'blue'}}
+          onPress={toSignUp}>
+          <Text style={styles.buttonText}>회원가입</Text>
         </Pressable>
       </View>
     </DismissKeyboardView>
@@ -104,8 +144,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   buttonZone: {
-    alignItems: 'center',
+    justifyContent: 'space-around',
     marginTop: 20,
+    flexDirection: 'row',
   },
   label: {
     fontWeight: 'bold',

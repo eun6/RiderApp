@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
 
@@ -93,13 +94,14 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.fooddeliveryapp"
+    namespace "com.rideryen.fooddeliveryapp"
     defaultConfig {
-        applicationId "com.fooddeliveryapp"
+        applicationId "com.rideryen.fooddeliveryapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        resValue "string", "build_config_package", "com.rideryen.fooddeliveryapp"
     }
 
     splits {
@@ -151,6 +153,8 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    //네이버 지도
+    implementation 'com.naver.maps:map-sdk:3.14.0'
 
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
 
