@@ -1,8 +1,15 @@
-import {Alert, Pressable, StyleSheet, Text, View, Dimensions} from 'react-native';
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+} from 'react-native';
 import React, {useCallback, useState} from 'react';
 import orderSlice, {Order} from '../slices/orders';
 import {useAppDispatch} from '../store';
-import getDistanceFromLatLonInKm from '../util';
+import getDistanceFromLatLonInKm from '../store/utils';
 import axios, {AxiosError} from 'axios';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';

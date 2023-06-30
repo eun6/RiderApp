@@ -14,7 +14,7 @@ import {RootStackParamList} from './App';
 import useSocket from './src/hooks/useSocket';
 import {useEffect} from 'react';
 import {useAppDispatch} from './src/store';
-import EncryptedStorage from 'react-native-encrypted-storage/lib/typescript/EncryptedStorage';
+import EncryptedStorage from 'react-native-encrypted-storage';
 import Config from 'react-native-config';
 import axios, {AxiosError} from 'axios';
 import {Alert} from 'react-native';
@@ -121,7 +121,6 @@ function AppInner() {
       },
     );
   }, [dispatch]);
-
 
   return (
     <NavigationContainer>
