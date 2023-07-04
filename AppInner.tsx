@@ -20,6 +20,7 @@ import axios, {AxiosError} from 'axios';
 import {Alert} from 'react-native';
 import userSlice from './src/slices/user';
 import orderSlice from './src/slices/orders';
+import usePermission from './src/hooks/usePermission';
 
 //TypeScript 요소임. 그냥 따라 적는 수밖에 없음.
 const Tab = createBottomTabNavigator();
@@ -29,6 +30,8 @@ function AppInner() {
   const dispatch = useAppDispatch();
   const isLoggedIn = useSelector((state: RootState) => !!state.user.email);
   const [socket, disconnect] = useSocket();
+
+  usePermission();
 
   useEffect(() => {
     const callback = (data: any) => {
